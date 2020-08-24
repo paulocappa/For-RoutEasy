@@ -9,9 +9,10 @@ export const Container = styled.div`
   padding: 30px;
   margin: 80px auto;
 
-  @media (max-width: 1100px) {
+  @media (max-width: 850px) {
     flex-direction: column;
     margin: 0 auto;
+    padding: 50px;
   }
 `;
 
@@ -51,7 +52,7 @@ export const Form = styled.form`
     cursor: not-allowed;
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 850px) {
     width: 100%;
 
     > button {
@@ -153,7 +154,7 @@ export const MapAndTable = styled.div`
     margin-top: 20px;
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 850px) {
     margin-left: 0;
     margin-top: 20px;
   }
@@ -186,7 +187,7 @@ export const Table = styled.table`
     background: #dcdcdc;
   }
 
-  @media (max-width: 680px) {
+  @media (max-width: 650px) {
     display: none;
   }
 `;

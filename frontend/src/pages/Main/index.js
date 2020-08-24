@@ -41,6 +41,7 @@ export default function Main() {
   const [information, setInformation] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [dataAddress, setDataAddress] = useState({});
+  const [points, setPoints] = useState([]);
 
   // LOAD DELIVERIES DATA TO DISPLAY ON TABLE AND ON MAP
   useEffect(() => {
@@ -49,6 +50,13 @@ export default function Main() {
       try {
         const response = await api.get('/deliveries');
 
+        const pins = response.data.map(({ address, ...item }) => ({
+          type: 'Feature',
+          properties: { cluster: false, ...item },
+          geometry: address.location,
+        }));
+
+        setPoints(pins);
         setData(response.data);
       } catch (error) {
         console.error(error);
@@ -61,7 +69,7 @@ export default function Main() {
     })();
   }, []);
 
-  // SHOW ERROR TOASTS
+  // SHOW TOAST ERRORS
   useEffect(() => {
     if (Object.values(errors).length > 0) {
       Object.values(errors).forEach(({ message }) => toast.error(message));
@@ -96,7 +104,14 @@ export default function Main() {
 
       const response = await api.post('/deliveries', form);
 
+      const newPoint = {
+        type: 'Feature',
+        properties: { cluster: false, ...response.data },
+        geometry: response.data.address.location,
+      };
+
       setData([...data, response.data]);
+      setPoints([...points, newPoint]);
 
       toast.success('Cliente cadastrado com sucesso!');
 
@@ -126,12 +141,12 @@ export default function Main() {
         );
       }
 
-      const addressComponent = response.results[0].address_components;
-
       [
         { name: 'latitude', value: response.results[0].geometry.location.lat },
         { name: 'longitude', value: response.results[0].geometry.location.lng },
       ].forEach(({ name, value }) => setValue(name, value));
+
+      const addressComponent = response.results[0].address_components;
 
       setDataAddress({
         street: addressComponent[1].short_name,
@@ -160,6 +175,7 @@ export default function Main() {
       await api.delete('/deliveries');
       setData([]);
       setInformation({});
+      setPoints([]);
       reset(defaultValues);
     } catch (error) {
       console.error(error);
@@ -239,7 +255,7 @@ export default function Main() {
 
       <MapAndTable>
         <div>
-          <MapComponent markers={data} />
+          <MapComponent points={points} />
         </div>
 
         <p>
